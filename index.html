@@ -17,6 +17,7 @@
           </p>
           <div class="hero__actions">
             <button class="button button--primary" id="start-button" type="button">开始测试</button>
+            <button class="button button--ghost" id="types-button" type="button">查看所有人格</button>
             <span class="hero__meta" id="question-count">正在读取题库...</span>
           </div>
         </div>
@@ -26,6 +27,29 @@
           <span>T / F</span>
           <span>J / P</span>
         </div>
+      </section>
+
+      <section class="types hidden" id="types-panel">
+        <div class="types__header">
+          <div>
+            <p class="eyebrow">Personality Types</p>
+            <h2>16 型人格大全</h2>
+            <p>点击任意人格名称，即可查看对应的人格介绍。</p>
+          </div>
+          <button class="button button--ghost" id="types-back-button" type="button">返回首页</button>
+        </div>
+        <div class="types__grid" id="types-grid"></div>
+        <article class="type-detail hidden" id="type-detail">
+          <div class="type-detail__topbar">
+            <div>
+              <p class="eyebrow">Type Detail</p>
+              <h2><span id="type-detail-code"></span> <small id="type-detail-subtitle"></small></h2>
+            </div>
+            <button class="button button--ghost" id="type-detail-close" type="button">收起详情</button>
+          </div>
+          <p class="type-detail__description" id="type-detail-description"></p>
+          <div class="result__details" id="type-detail-content"></div>
+        </article>
       </section>
 
       <section class="quiz hidden" id="quiz-panel" aria-live="polite">
@@ -62,10 +86,10 @@
           <p id="result-description"></p>
           <div class="result__actions">
             <button class="button button--primary" id="restart-button" type="button">重新测试</button>
-            <button class="button button--ghost" id="review-button" type="button">查看维度分布</button>
+            <button class="button button--ghost" id="result-types-button" type="button">查看所有人格</button>
           </div>
         </div>
-        <div class="scores hidden" id="scores-panel"></div>
+        <div class="scores" id="scores-panel"></div>
         <div class="result__details" id="result-content"></div>
       </section>
 

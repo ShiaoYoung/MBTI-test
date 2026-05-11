@@ -29,11 +29,15 @@
 
   var introPanel = document.getElementById('intro-panel');
   var quizPanel = document.getElementById('quiz-panel');
+  var typesPanel = document.getElementById('types-panel');
   var resultPanel = document.getElementById('result-panel');
   var errorPanel = document.getElementById('error-panel');
   var startButton = document.getElementById('start-button');
   var restartButton = document.getElementById('restart-button');
-  var reviewButton = document.getElementById('review-button');
+  var typesButton = document.getElementById('types-button');
+  var resultTypesButton = document.getElementById('result-types-button');
+  var typesBackButton = document.getElementById('types-back-button');
+  var typeDetailClose = document.getElementById('type-detail-close');
   var questionCount = document.getElementById('question-count');
   var progressTitle = document.getElementById('progress-title');
   var progressNumber = document.getElementById('progress-number');
@@ -46,9 +50,15 @@
   var resultDescription = document.getElementById('result-description');
   var resultContent = document.getElementById('result-content');
   var scoresPanel = document.getElementById('scores-panel');
+  var typesGrid = document.getElementById('types-grid');
+  var typeDetail = document.getElementById('type-detail');
+  var typeDetailCode = document.getElementById('type-detail-code');
+  var typeDetailSubtitle = document.getElementById('type-detail-subtitle');
+  var typeDetailDescription = document.getElementById('type-detail-description');
+  var typeDetailContent = document.getElementById('type-detail-content');
 
   function showPanel(panel) {
-    [introPanel, quizPanel, resultPanel, errorPanel].forEach(function (item) {
+    [introPanel, quizPanel, typesPanel, resultPanel, errorPanel].forEach(function (item) {
       item.classList.toggle('hidden', item !== panel);
     });
   }
@@ -173,9 +183,47 @@
     state.quizQuestions = shuffle(state.questions);
     state.currentIndex = 0;
     state.answers = new Array(state.quizQuestions.length).fill(null);
-    scoresPanel.classList.add('hidden');
     renderQuestion();
     showPanel(quizPanel);
+  }
+
+  function stripHtml(html) {
+    var holder = document.createElement('div');
+    holder.innerHTML = html;
+    return holder.textContent || '';
+  }
+
+  function renderTypesList() {
+    typesGrid.innerHTML = state.personalities.map(function (item) {
+      return '<button class="type-card" type="button" data-type="' + item.type + '">' +
+        '<strong>' + item.type + '</strong>' +
+        '<span>' + item.subtitle + '</span>' +
+        '<small>' + item.description.slice(0, 74) + '...</small>' +
+        '</button>';
+    }).join('');
+  }
+
+  function showTypeDetail(type) {
+    var personality = state.personalities.find(function (item) {
+      return item.type === type;
+    });
+
+    if (!personality) {
+      return;
+    }
+
+    typeDetailCode.textContent = personality.type;
+    typeDetailSubtitle.textContent = personality.subtitle;
+    typeDetailDescription.textContent = personality.description;
+    typeDetailContent.innerHTML = personality.contentHtml;
+    typeDetail.classList.remove('hidden');
+    typeDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showTypesPanel() {
+    renderTypesList();
+    showPanel(typesPanel);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function renderScores(counts) {
@@ -185,10 +233,20 @@
       var leftScore = counts[left] || 0;
       var rightScore = counts[right] || 0;
       var winner = leftScore > rightScore ? left : right;
+      var total = leftScore + rightScore;
+      var leftPercent = total === 0 ? 50 : Math.round((leftScore / total) * 100);
+      var rightPercent = 100 - leftPercent;
+      var winnerPercent = winner === left ? leftPercent : rightPercent;
 
       return '<div class="score-card">' +
+        '<div class="donut" style="--value: ' + winnerPercent + '">' +
+        '<div><strong>' + winner + '</strong><span>' + winnerPercent + '%</span></div>' +
+        '</div>' +
+        '<div class="score-card__body">' +
         '<strong>' + left + '/' + right + ' · ' + labels[winner] + '</strong>' +
-        '<span>' + labels[left] + ' ' + leftScore + ' 分 · ' + labels[right] + ' ' + rightScore + ' 分</span>' +
+        '<span>' + labels[left] + ' ' + leftScore + ' 分（' + leftPercent + '%）</span>' +
+        '<span>' + labels[right] + ' ' + rightScore + ' 分（' + rightPercent + '%）</span>' +
+        '</div>' +
         '</div>';
     }).join('');
   }
@@ -256,14 +314,29 @@
 
   startButton.addEventListener('click', startQuiz);
   restartButton.addEventListener('click', startQuiz);
-  reviewButton.addEventListener('click', function () {
-    scoresPanel.classList.toggle('hidden');
+  typesButton.addEventListener('click', showTypesPanel);
+  resultTypesButton.addEventListener('click', showTypesPanel);
+  typesBackButton.addEventListener('click', function () {
+    showPanel(introPanel);
+  });
+  typeDetailClose.addEventListener('click', function () {
+    typeDetail.classList.add('hidden');
+  });
+  typesGrid.addEventListener('click', function (event) {
+    var button = event.target.closest('.type-card');
+
+    if (!button) {
+      return;
+    }
+
+    showTypeDetail(button.dataset.type);
   });
 
   loadData().then(function (results) {
     state.questions = results[0];
     state.personalities = results[1];
     questionCount.textContent = state.questions.length + ' 道题 · ' + state.personalities.length + ' 种人格';
+    renderTypesList();
     startButton.disabled = false;
   }).catch(function () {
     startButton.disabled = true;
