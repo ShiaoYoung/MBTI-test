@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MBTI 人格测试</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" id="intro-panel">
+        <div class="hero__content">
+          <p class="eyebrow">MBTI Personality Test</p>
+          <h1>探索你的 16 型人格倾向</h1>
+          <p class="hero__lead">
+            每次开始都会随机排列题目顺序。请凭第一感觉作答，完成后即可查看人格类型、维度分布和完整介绍。
+          </p>
+          <div class="hero__actions">
+            <button class="button button--primary" id="start-button" type="button">开始测试</button>
+            <span class="hero__meta" id="question-count">正在读取题库...</span>
+          </div>
+        </div>
+        <div class="hero__card" aria-hidden="true">
+          <span>E / I</span>
+          <span>S / N</span>
+          <span>T / F</span>
+          <span>J / P</span>
+        </div>
+      </section>
+
+      <section class="quiz hidden" id="quiz-panel" aria-live="polite">
+        <div class="quiz__topbar">
+          <div>
+            <p class="eyebrow">Question</p>
+            <h2 id="progress-title">第 1 题</h2>
+          </div>
+          <div class="progress-number" id="progress-number">0 / 0</div>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <article class="question-card">
+          <p class="question-text" id="question-text"></p>
+          <div class="choices" id="choices"></div>
+        </article>
+        <aside class="answer-sheet" aria-label="答题卡">
+          <div class="answer-sheet__header">
+            <div>
+              <p class="eyebrow">Answer Sheet</p>
+              <h3>答题卡</h3>
+            </div>
+            <p>点击题号可切换题目，已作答题目会高亮显示。</p>
+          </div>
+          <div class="answer-sheet__grid" id="answer-sheet"></div>
+        </aside>
+      </section>
+
+      <section class="result hidden" id="result-panel">
+        <div class="result__summary">
+          <p class="eyebrow">Your Result</p>
+          <h2><span id="result-type">----</span> <small id="result-subtitle"></small></h2>
+          <p id="result-description"></p>
+          <div class="result__actions">
+            <button class="button button--primary" id="restart-button" type="button">重新测试</button>
+            <button class="button button--ghost" id="review-button" type="button">查看维度分布</button>
+          </div>
+        </div>
+        <div class="scores hidden" id="scores-panel"></div>
+        <div class="result__details" id="result-content"></div>
+      </section>
+
+      <section class="error hidden" id="error-panel" role="alert"></section>
+    </main>
+
+    <footer class="site-footer">
+      题库与人格介绍来自开源项目 MskTmi/MBTI（MIT License）。本页面仅用于自我探索，不作为心理诊断依据。
+    </footer>
+
+    <script src="./data/questions.js"></script>
+    <script src="./data/personality-content.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
